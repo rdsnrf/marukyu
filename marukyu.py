@@ -6,12 +6,11 @@
 #import logging
 #import time
 
-from telegram import Update
-from telegram.ext import Application, CommandHandler, CallbackContext
 import logging
-import requests
-from bs4 import BeautifulSoup
-import asyncio
+from telegram import Update
+from telegram.ext import Application, CommandHandler, CallbackContext, ContextTypes
+import tracemalloc
+tracemalloc.start()
 
 # Configuration
 TELEGRAM_TOKEN = '7074485841:AAFk-dNz4ZRNV99DYSwZBRPpHcvwdCIZABc'
@@ -21,20 +20,12 @@ PRODUCT_URL = 'https://www.marukyu-koyamaen.co.jp/english/shop/products/1141020c
 # Set up logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-def check_product_availability():
-    response = requests.get(PRODUCT_URL)
-    soup = BeautifulSoup(response.content, 'html.parser')
-
-    # Find the button by class name and check its display property
-    button = soup.find(class_='single_add_to_cart_button button')
-
-    # Simplified check
-    if button and button.get('style') and 'display: block' in button['style']:
-        return True
-    return False
+async def check_product_availability():
+    # Add your product checking logic here
+    return True  # Example: Always returning True for testing
 
 async def send_notification(context: CallbackContext):
-    if check_product_availability():
+    if await check_product_availability():
         await context.bot.send_message(chat_id=CHAT_ID, text="The product is available! Check it out here: " + PRODUCT_URL)
 
 async def start(update: Update, context: CallbackContext):
@@ -43,17 +34,18 @@ async def start(update: Update, context: CallbackContext):
 async def main():
     application = Application.builder().token(TELEGRAM_TOKEN).build()
 
+    # Add command handlers
     application.add_handler(CommandHandler("start", start))
 
-    # Schedule the send_notification function to run periodically
-    application.job_queue.run_repeating(send_notification, interval=3600, first=0)  # Check every hour
+    # Ensure you have installed the job-queue support
+    try:
+        application.job_queue.run_repeating(send_notification, interval=300, first=0)  # Check every hour
+    except AttributeError:
+        logging.warning("JobQueue is not available. Make sure you have installed the job-queue optional dependencies.")
 
-    # Start polling
-    await application.run_polling()
+    # Start the bot
+    #await application.run_polling()
 
-# Handling event loop for interactive environments
-loop = asyncio.get_event_loop()
-if loop.is_running():
-    import nest_asyncio
-    nest_asyncio.apply()
-loop.run_until_complete(main())
+if __name__ == '__main__':
+    import asyncio
+    asyncio.run(main())
