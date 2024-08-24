@@ -49,36 +49,62 @@ def check_product_availability(url):
         logging.error(f"Error checking product availability: {e}")
         return False
 
+# async def send_notification(context: CallbackContext):
+#     available_products = []
+#     unavailable_products = []
+
+#     for product in PRODUCTS:
+#         if check_product_availability(product['url']):
+#             available_products.append(product['name'])
+#         else:
+#             unavailable_products.append(product['name'])
+
+#     if available_products:
+#         for product in available_products:
+#             try:
+#                 message = f"{product} is available! Check it out here: {product['url']}"
+#                 await context.bot.send_message(chat_id=CHAT_ID, text=message)
+#                 logging.info(f"Sent availability notification for {product}")
+#             except Exception as e:
+#                 logging.error(f"Failed to send message for {product}: {e}")
+#     else:
+#         try:
+#             message = "None of the products are available at the moment."
+#             await context.bot.send_message(chat_id=CHAT_ID, text=message)
+#             logging.info("Sent no availability notification")
+#         except Exception as e:
+#             logging.error(f"Failed to send no availability message: {e}")
+
 async def send_notification(context: CallbackContext):
     available_products = []
     unavailable_products = []
 
     for product in PRODUCTS:
-        if check_product_availability(product['url']):
-            available_products.append(product['name'])
-        else:
-            unavailable_products.append(product['name'])
+        try:
+            if check_product_availability(product['url']):
+                available_products.append(product['name'])
+            else:
+                unavailable_products.append(product['name'])
+        except Exception as e:
+            logging.error(f"Error checking availability for {product['name']}: {e}")
 
-    if available_products:
-        for product in available_products:
-            try:
+    try:
+        if available_products:
+            for product in available_products:
                 message = f"{product} is available! Check it out here: {product['url']}"
                 await context.bot.send_message(chat_id=CHAT_ID, text=message)
                 logging.info(f"Sent availability notification for {product}")
-            except Exception as e:
-                logging.error(f"Failed to send message for {product}: {e}")
-    else:
-        try:
+        else:
             message = "None of the products are available at the moment."
             await context.bot.send_message(chat_id=CHAT_ID, text=message)
             logging.info("Sent no availability notification")
-        except Exception as e:
-            logging.error(f"Failed to send no availability message: {e}")
+    except Exception as e:
+        logging.error(f"Error sending notification: {e}")
 
 async def start(update: Update, context: CallbackContext):
     await update.message.reply_text('I will notify you when any of the products become available.')
 
-async def check(update: Update, context: CallbackContext):
+async def check_command(update: Update, context: CallbackContext):
     logging.info("Received /check command")
     await send_notification(context)
 
@@ -90,7 +116,7 @@ async def main():
 
     # Add command handlers
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("check", check))
+    application.add_handler(CommandHandler("check", check_command))
     application.add_handler(CommandHandler("test", test_command))  # Add test command handler
 
     # Ensure you have installed the job-queue support
