@@ -131,6 +131,7 @@ async def main():
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("check", check_command))
     application.add_handler(CommandHandler("test", test_command))  # Add test command handler
+    application.add_handler(CommandHandler("test_send", test_send_message))
 
     # Ensure you have installed the job-queue support
     try:
