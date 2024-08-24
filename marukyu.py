@@ -23,7 +23,8 @@ TELEGRAM_TOKEN = '7074485841:AAFk-dNz4ZRNV99DYSwZBRPpHcvwdCIZABc'
 response = requests.get(f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/getUpdates')
 print(response.json())
 
-CHAT_ID = 'MarukyuKoyamaen_bot'  # Replace with your chat ID
+# CHAT_ID = 'MarukyuKoyamaen_bot'  # Replace with your chat ID
+CHAT_ID = '5852585735'
 # List of products with names and URLs
 PRODUCTS = [
     {'name': 'Unkaku', 'url': 'https://www.marukyu-koyamaen.co.jp/english/shop/products/1141020c1/'},
