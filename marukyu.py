@@ -20,6 +20,9 @@ nest_asyncio.apply()
 
 # Configuration
 TELEGRAM_TOKEN = '7074485841:AAFk-dNz4ZRNV99DYSwZBRPpHcvwdCIZABc'
+response = requests.get(f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/getUpdates')
+print(response.json())
+
 CHAT_ID = 'MarukyuKoyamaen_bot'  # Replace with your chat ID
 # List of products with names and URLs
 PRODUCTS = [
