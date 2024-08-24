@@ -117,13 +117,13 @@ async def check_command(update: Update, context: CallbackContext):
 async def test_command(update: Update, context: CallbackContext):
     await update.message.reply_text("Test command received!")
 
-async def test_send_message(context: CallbackContext):
-    try:
-        test_chat_id = '5852585735'  # Replace with a known working chat ID
-        await context.bot.send_message(chat_id=test_chat_id, text="Test message from send_notification!")
-        logging.info("Test message sent successfully.")
-    except Exception as e:
-        logging.error(f"Error sending test message: {e}")
+# async def test_send_message(context: CallbackContext):
+#     try:
+#         test_chat_id = '5852585735'  # Replace with a known working chat ID
+#         await context.bot.send_message(chat_id=test_chat_id, text="Test message from send_notification!")
+#         logging.info("Test message sent successfully.")
+#     except Exception as e:
+#         logging.error(f"Error sending test message: {e}")
 
 async def test_send_notification(update: Update, context: CallbackContext):
     try:
@@ -139,7 +139,7 @@ async def main():
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("check", check_command))
     application.add_handler(CommandHandler("test", test_command))  # Add test command handler
-    application.add_handler(CommandHandler("test_send", test_send_message))
+    # application.add_handler(CommandHandler("test_send", test_send_message))
     application.add_handler(CommandHandler("test_notify", test_send_notification))
 
 
