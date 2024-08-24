@@ -68,6 +68,7 @@ async def start(update: Update, context: CallbackContext):
     await update.message.reply_text('I will notify you when any of the products become available.')
 
 async def check(update: Update, context: CallbackContext):
+    logging.info("Received /check command")
     await send_notification(context)
 
 async def main():
