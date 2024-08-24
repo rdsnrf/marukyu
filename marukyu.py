@@ -119,11 +119,18 @@ async def test_command(update: Update, context: CallbackContext):
 
 async def test_send_message(context: CallbackContext):
     try:
-        test_chat_id = 'MarukyuKoyamaen_bot'  # Replace with a known working chat ID
+        test_chat_id = '5852585735'  # Replace with a known working chat ID
         await context.bot.send_message(chat_id=test_chat_id, text="Test message from send_notification!")
         logging.info("Test message sent successfully.")
     except Exception as e:
         logging.error(f"Error sending test message: {e}")
+
+async def test_send_notification(update: Update, context: CallbackContext):
+    try:
+        await send_notification(context)
+        await update.message.reply_text("Test notification sent.")
+    except Exception as e:
+        await update.message.reply_text(f"Failed to send test notification: {e}")
 
 async def main():
     application = Application.builder().token(TELEGRAM_TOKEN).build()
@@ -133,6 +140,7 @@ async def main():
     application.add_handler(CommandHandler("check", check_command))
     application.add_handler(CommandHandler("test", test_command))  # Add test command handler
     application.add_handler(CommandHandler("test_send", test_send_message))
+    application.add_handler(CommandHandler("test_notify", test_send_notification))
 
 
     # Ensure you have installed the job-queue support
