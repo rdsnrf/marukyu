@@ -133,6 +133,7 @@ async def main():
     application.add_handler(CommandHandler("test", test_command))  # Add test command handler
     application.add_handler(CommandHandler("test_send", test_send_message))
 
+
     # Ensure you have installed the job-queue support
     try:
         application.job_queue.run_repeating(send_notification, interval=300, first=0)  # Check every 5 minutes
@@ -143,7 +144,12 @@ async def main():
         logging.error(f"Error starting job queue: {e}")
 
     # Start the bot
-    await application.run_polling()
+    # await application.run_polling()
+
+    try:
+        await application.run_polling()
+    except Exception as e:
+        logging.error(f"Error running bot: {e}")
 
 if __name__ == '__main__':
     try:
