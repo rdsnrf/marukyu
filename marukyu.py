@@ -61,9 +61,19 @@ async def send_notification(context: CallbackContext):
 
     if available_products:
         for product in available_products:
-            await context.bot.send_message(chat_id=CHAT_ID, text=f"{product} is available! Check it out here: {product['url']}")
+            try:
+                message = f"{product} is available! Check it out here: {product['url']}"
+                await context.bot.send_message(chat_id=CHAT_ID, text=message)
+                logging.info(f"Sent availability notification for {product}")
+            except Exception as e:
+                logging.error(f"Failed to send message for {product}: {e}")
     else:
-        await context.bot.send_message(chat_id=CHAT_ID, text="None of the products are available at the moment.")
+        try:
+            message = "None of the products are available at the moment."
+            await context.bot.send_message(chat_id=CHAT_ID, text=message)
+            logging.info("Sent no availability notification")
+        except Exception as e:
+            logging.error(f"Failed to send no availability message: {e}")
 
 async def start(update: Update, context: CallbackContext):
     await update.message.reply_text('I will notify you when any of the products become available.')
@@ -86,8 +96,11 @@ async def main():
     # Ensure you have installed the job-queue support
     try:
         application.job_queue.run_repeating(send_notification, interval=300, first=0)  # Check every 5 minutes
+        logging.info("Job queue started.")
     except AttributeError:
         logging.warning("JobQueue is not available. Make sure you have installed the job-queue optional dependencies.")
+    except Exception as e:
+        logging.error(f"Error starting job queue: {e}")
 
     # Start the bot
     await application.run_polling()
