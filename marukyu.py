@@ -36,6 +36,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 def check_product_availability(url):
     try:
         response = requests.get(url)
+        logging.info(f"Fetching URL: {url}, Status Code: {response.status_code}")
         response.raise_for_status()  # Raise an HTTPError for bad responses
         soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -71,12 +72,16 @@ async def check(update: Update, context: CallbackContext):
     logging.info("Received /check command")
     await send_notification(context)
 
+async def test_command(update: Update, context: CallbackContext):
+    await update.message.reply_text("Test command received!")
+
 async def main():
     application = Application.builder().token(TELEGRAM_TOKEN).build()
 
     # Add command handlers
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("check", check))
+    application.add_handler(CommandHandler("test", test_command))  # Add test command handler
 
     # Ensure you have installed the job-queue support
     try:
