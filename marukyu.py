@@ -91,16 +91,18 @@ async def send_notification(context: CallbackContext):
         except Exception as e:
             logging.error(f"Error checking availability for {product['name']}: {e}")
 
+    if available_products:
+        message = "\n".join([f"{product} is available! Check it out here: {product['url']}" for product in available_products])
+    else:
+        message = "None of the products are available at the moment."
+
     try:
-        if available_products:
-            for product in available_products:
-                message = f"{product} is available! Check it out here: {product['url']}"
-                await context.bot.send_message(chat_id=CHAT_ID, text=message)
-                logging.info(f"Sent availability notification for {product}")
-        else:
-            message = "None of the products are available at the moment."
-            await context.bot.send_message(chat_id=CHAT_ID, text=message)
-            logging.info("Sent no availability notification")
+        # Debug logging
+        logging.info(f"Attempting to send message to chat_id: {CHAT_ID}")
+        logging.info(f"Message content: {message}")
+
+        await context.bot.send_message(chat_id=CHAT_ID, text=message)
+        logging.info("Message sent successfully.")
     except Exception as e:
         logging.error(f"Error sending notification: {e}")
 
@@ -113,6 +115,14 @@ async def check_command(update: Update, context: CallbackContext):
 
 async def test_command(update: Update, context: CallbackContext):
     await update.message.reply_text("Test command received!")
+
+async def test_send_message(context: CallbackContext):
+    try:
+        test_chat_id = 'MarukyuKoyamaen_bot'  # Replace with a known working chat ID
+        await context.bot.send_message(chat_id=test_chat_id, text="Test message from send_notification!")
+        logging.info("Test message sent successfully.")
+    except Exception as e:
+        logging.error(f"Error sending test message: {e}")
 
 async def main():
     application = Application.builder().token(TELEGRAM_TOKEN).build()
